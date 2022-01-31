@@ -1,3 +1,3 @@
-description,make,model,year
-Luxury sports car,Porsche,356,1948
-Mustang fastback 1967,Ford,American car,1967
+model,description,year,make
+356,Luxury sports car,1948,Porsche
+American car,1967,Mustang fastback 1967,Ford

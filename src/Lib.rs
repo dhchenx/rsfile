@@ -1,109 +1,34 @@
-#[cfg(test)]
-mod tests {
-    use std::ptr::write;
-    use crate::*;
-    #[test]
-    fn test_read_text(){
-        let mytext=read_text("data/poem.txt");
-        println!();
-        println!("{:?}",mytext);
-    }
-
-    #[test]
-    fn test_write_text(){
-        let r:bool = write_text("data/test.txt","I Like you!\n美国!");
-        println!("result = {}",r);
-    }
-
-    #[test]
-    fn test_read_lines(){
-        let lines=read_lines("data/test.txt");
-        for line in lines {
-            println!("LINE: {}",line);
-        }
-    }
-
-    #[test]
-    fn test_read_csv_text(){
-        let text = "year,make,model,description
-        1948,Porsche,356,Luxury sports car
-        1967,Ford,Mustang fastback 1967,American car";
-
-        let result=read_csv_text_with_error(text);
-        match result{
-            Ok(list)=>{
-                for model in list{
-                    println!("RECORD: {:?}",model);
-                    for k in model.keys(){
-                        let value=if let Some(v)=model.get(k){
-                            println!("{}:{}",k,v);
-                        };
-                        // println!("{:?}",value);
-                    }
-                    println!();
-                }
-            },
-            Err(e)=>{
-                eprintln!("result error: {}",e);
-            }
-        }
-
-    }
-
-    #[test]
-    fn test_read_csv_file(){
-
-        let result=read_csv_with_error("data/test.csv");
-        match result{
-            Ok(list)=>{
-                for model in list{
-                    println!("RECORD: {:?}",model);
-                    for k in model.keys(){
-                        let value=if let Some(v)=model.get(k){
-                            println!("{}:{}",k,v);
-                        };
-                        // println!("{:?}",value);
-                    }
-                    println!();
-                }
-            },
-            Err(e)=>{
-                eprintln!("result error: {}",e);
-            }
-        }
-
-    }
-
-    #[test]
-    fn test_get_csv_simple(){
-        let result=read_csv_simple("data/test.csv");
-        for model in result{
-            println!("{:?}",model);
-        }
-    }
-
-    #[test]
-    fn test_get_csv_simple2(){
-        let text = "year,make,model,description
-        1948,Porsche,356,Luxury sports car
-        1967,Ford,Mustang fastback 1967,American car";
-        let result=read_csv_text(text);
-        for model in result{
-            println!("{:?}",model);
-        }
-    }
-
-    #[test]
-    fn test_write_csv(){
-        let list_model=read_csv("data/test.csv");
-        let flag=write_csv("data/test1.csv",list_model);
-        println!("{}",flag);
-    }
-}
+///! # Rust File Utility
+///!
+///! The `rsfile` library is a toolkit to operate files easily and quickly in Rust.
+///!
+///! ## Examples
+///! fn test_rsfile(){
+///!     use rsfile;
+///!
+///!     // read a csv file and load a list of HashMap models where you can get value by key.
+///!     let result=rsfile::read_csv_simple("data/test.csv");
+///!     for model in result{
+///!         println!("RECORD: {:?}",model);
+///!     }
+///!
+///!     // save a csv file by using a list of HashMap models where you can get value by key.
+///!     let list_model=rsfile::read_csv("data/test.csv");
+///!     let flag=rsfile::write_csv("data/test1.csv",list_model);
+///!     println!("{}",flag);
+///!
+///! }
+///!
+///!  More examples can be found in [here](https://crates.io/crates/rsfile)
+///!
+///! ## License
+///! MIT
 
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+mod web;
+pub use web::{read_html_string,read_html_file ,fetch_html,show_dict};
 
 pub fn read_text(filepath:&str)->String{
     // Create a path to the desired file
@@ -191,7 +116,7 @@ pub fn read_csv_text_with_error(text:&str)->Result<Vec<HashMap<String,String>>, 
     let mut list_result:Vec<HashMap<String,String>>=Vec::new();
 
     let headers=reader.headers()?.clone();
-    println!("{:?}",headers);
+    println!("Headers: {:?}",headers);
 
     let headers_num=headers.len();
 
@@ -213,7 +138,7 @@ pub fn read_csv_text_with_error(text:&str)->Result<Vec<HashMap<String,String>>, 
             model.insert(key,value);
         }
 
-        println!("{:?}", record);
+        // println!("{:?}", record);
         // let s=String::from(&record[0].to_string());
         list_result.push(model);
     };
@@ -265,7 +190,7 @@ pub fn read_csv_text(text:&str)->Vec<HashMap<String,String>>{
                     model.insert(key,value);
                 }
 
-                println!("{:?}", rec);
+                // println!("{:?}", rec);
                 // let s=String::from(&record[0].to_string());
                 list_result.push(model);
             },
@@ -304,13 +229,13 @@ pub fn read_csv_simple(filepath:&str)->Vec<HashMap<String,String>>{
                 let mut new_model:HashMap<String,String>=HashMap::new();
                 for k in model.keys(){
                     let value=if let Some(v)=model.get(k){
-                        println!("{}:{}",k,v);
+                        // println!("{}:{}",k,v);
                         new_model.insert(k.to_string().clone(),v.to_string().clone());
                     };
                     // println!("{:?}",value);
                 }
                 list_result.push(new_model);
-                println!();
+                // println!();
             }
         },
         Err(e)=>{
@@ -348,7 +273,7 @@ pub fn write_csv(filepath:&str,list_model:Vec<HashMap<String,String>>)->bool{
                     }
 
                 }
-                println!("-{:?}",values);
+                // println!("-{:?}",values);
                 writer.write_record(&values);
             }
             writer.flush();

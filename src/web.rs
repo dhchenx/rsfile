@@ -49,7 +49,9 @@ mod tests {
 use std::collections::HashMap;
 use webpage::{Webpage, WebpageOptions};
 use webpage::HTML;
-
+///
+/// Convert a Option<String> to &str
+///
 pub fn get_string_or_empty(s:Option<String>)->String{
     match(s){
         Some(str)=>str,
@@ -66,6 +68,9 @@ pub fn string_to_str(string:String)->&'static str{
     return hh;
 }
 */
+///
+/// print a HashMap model
+///
 pub fn show_dict(model:HashMap<String,String> ){
     for k in model.keys(){
         println!("{}\t{:?}",k,model.get(k));
@@ -85,6 +90,10 @@ pub fn opt_string_to_str(opt_string:Option<String>)->&'static str{
 }
  */
 
+
+///
+/// Read a html file and return dict
+///
 pub fn read_html_file(file_path:&str)->HashMap<String,String>{
     let html = HTML::from_file(file_path, None);
     let mut page:HashMap<String,String>=HashMap::new();
@@ -104,6 +113,9 @@ pub fn read_html_file(file_path:&str)->HashMap<String,String>{
     }
 }
 
+///
+/// Read HTML dict from a HTML string
+///
 pub fn read_html_string(html_string:String)->HashMap<String,String>{
     let html = HTML::from_string(html_string,None);
 
@@ -124,6 +136,9 @@ pub fn read_html_string(html_string:String)->HashMap<String,String>{
     }
 }
 
+///
+/// Fetch a web page's HTML codes and return a dict of the HTML page
+///
 pub fn fetch_html(url:&str)->HashMap<String,String>{
     let info = Webpage::from_url(url, WebpageOptions::default())
         .expect("Could not read from URL");

@@ -1,6 +1,10 @@
-use webpage::{Webpage, WebpageOptions};
-use webpage::HTML;
+use std::io::{Error, stdin};
+mod rsio;
+use rsio::*;
 
 fn main(){
-    println!("Hello, rsfile!")
+    println!("Hello, rsfile!");
+    let args=std::env::args();
+    println!("{:?}",args);
+
 }

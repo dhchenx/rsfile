@@ -1,35 +1,44 @@
-///! # Rust File Utility
-///!
-///! The `rsfile` library is a toolkit to operate files easily and quickly in Rust.
-///!
-///! ## Examples
-///! fn test_rsfile(){
-///!     use rsfile;
-///!
-///!     // read a csv file and load a list of HashMap models where you can get value by key.
-///!     let result=rsfile::read_csv_simple("data/test.csv");
-///!     for model in result{
-///!         println!("RECORD: {:?}",model);
-///!     }
-///!
-///!     // save a csv file by using a list of HashMap models where you can get value by key.
-///!     let list_model=rsfile::read_csv("data/test.csv");
-///!     let flag=rsfile::write_csv("data/test1.csv",list_model);
-///!     println!("{}",flag);
-///!
-///! }
-///!
-///!  More examples can be found in [here](https://crates.io/crates/rsfile)
-///!
-///! ## License
-///! MIT
+///
+///
+/// A Rust library to operate files or web pages easily and quickly
+///
+/// ```
+///  use rsfile::*;
+/// // Read a file
+///  let mytext=read_text("data/poem.txt");
+/// // Write a file
+///  write_text("data/test.txt","I Like Rust!");
+/// // Read a csv file
+/// let result=read_csv_simple("data/test.csv");
+///  for model in result{
+///      println!("{:?}",model);
+///   }
+/// // Write a csv file
+/// let flag=write_csv("data/test1.csv",list_model);
+///  println!("{}",flag);
+/// // Input from the terminal
+/// let line=input_line();
+/// let line=input_line_with_msg("Please input a line:");
+/// // Fetch a web page
+/// let page=fetch_html("https://www.rust-lang.org/");
+///  for k in page.keys(){
+///      println!("{}\t{:?}",k,page.get(k));
+///  };
+/// ```
 
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 mod web;
+mod rsio;
+
 pub use web::{read_html_string,read_html_file ,fetch_html,show_dict};
 
+pub use rsio::*;
+
+///
+/// Read a text file
+///
 pub fn read_text(filepath:&str)->String{
     // Create a path to the desired file
     let path = Path::new(filepath);
@@ -53,6 +62,9 @@ pub fn read_text(filepath:&str)->String{
     s
 }
 
+///
+/// write text into a file
+///
 pub fn write_text(filepath:&str,content:&str)->bool{
     let path = Path::new(filepath);
     let display = path.display();
@@ -88,6 +100,9 @@ fn _read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
     Ok(io::BufReader::new(file).lines())
 }
 
+///
+/// Read a list of lines from a file
+///
 pub fn read_lines(filepath:&str)->Vec<String>{
     // The output is wrapped in a Result to allow matching on errors
     // Returns an Iterator to the Reader of the lines of the file.
@@ -109,6 +124,10 @@ pub fn read_lines(filepath:&str)->Vec<String>{
 use csv::Error;
 
 use std::collections::HashMap;
+
+///
+/// read a csv file with Result<,>
+///
 pub fn read_csv_text_with_error(text:&str)->Result<Vec<HashMap<String,String>>, Error>{
 
     let mut reader = csv::Reader::from_reader(text.as_bytes());
@@ -146,6 +165,9 @@ pub fn read_csv_text_with_error(text:&str)->Result<Vec<HashMap<String,String>>, 
     Ok(list_result)
 }
 
+///
+/// Read a csv file's text
+///
 pub fn read_csv_text(text:&str)->Vec<HashMap<String,String>>{
 
     let mut reader = csv::Reader::from_reader(text.as_bytes());
@@ -205,18 +227,27 @@ pub fn read_csv_text(text:&str)->Vec<HashMap<String,String>>{
     list_result
 }
 
+///
+/// Read a csv file using Result<,>
+///
 pub fn read_csv_with_error(filepath:&str)->Result<Vec<HashMap<String,String>>,Error>{
     let all_text=read_text(filepath);
     let all_text_slice:&str=&all_text[..];
     read_csv_text_with_error(all_text_slice)
 }
 
+///
+/// Read a csv file in a very simple manner and return a Vec<HashMap<String,String>> list
+///
 pub fn read_csv(filepath:&str)->Vec<HashMap<String,String>>{
     let all_text=read_text(filepath);
     let all_text_slice:&str=&all_text[..];
     read_csv_text(all_text_slice)
 }
 
+///
+/// Read a simple csv file and return a list of HashMap models
+///
 pub fn read_csv_simple(filepath:&str)->Vec<HashMap<String,String>>{
 
     let mut list_result:Vec<HashMap<String,String>>=Vec::new();
@@ -245,6 +276,9 @@ pub fn read_csv_simple(filepath:&str)->Vec<HashMap<String,String>>{
     return list_result;
 }
 
+///
+/// Write a csv file from a list of HashMap model
+///
 pub fn write_csv(filepath:&str,list_model:Vec<HashMap<String,String>>)->bool{
     let mut wtr = csv::Writer::from_path(filepath);
     match wtr{
